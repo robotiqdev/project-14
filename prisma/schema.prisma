@@ -1,0 +1,58 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  name      String
+  isActive  Boolean  @default(true)
+  teamId    String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  assignedTasks    TaskAssignment[] @relation("assignee")
+  assignedByTasks  TaskAssignment[] @relation("assignedBy")
+
+  @@map("users")
+}
+
+model Task {
+  id          String   @id @default(uuid())
+  title       String
+  description String?
+  teamId      String?
+  status      String   @default("open")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  assignments TaskAssignment[]
+
+  @@map("tasks")
+}
+
+model TaskAssignment {
+  id             String    @id @default(uuid())
+  taskId         String
+  assigneeId     String
+  assignedById   String
+  assignedAt     DateTime  @default(now())
+  unassignedAt   DateTime?
+  unassignReason String?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  task       Task @relation(fields: [taskId], references: [id])
+  assignee   User @relation("assignee", fields: [assigneeId], references: [id])
+  assignedBy User @relation("assignedBy", fields: [assignedById], references: [id])
+
+  @@map("task_assignments")
+}
