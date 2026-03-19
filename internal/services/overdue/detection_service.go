@@ -25,5 +25,5 @@ func NewDetectionService(repo task.OverdueTaskRepository) *DetectionService {
 // DetectOverdueTasks returns all tasks that are overdue as of the given time.
 // Tasks with due_date < asOf and status NOT IN ('done','archived','cancelled') are returned.
 func (s *DetectionService) DetectOverdueTasks(ctx context.Context, asOf time.Time) ([]task.OverdueTask, error) {
-	panic("not implemented")
+	return s.repo.FindOverdueTasks(ctx, asOf)
 }

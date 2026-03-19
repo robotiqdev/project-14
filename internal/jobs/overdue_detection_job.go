@@ -41,8 +41,18 @@ func NewOverdueDetectionJob(
 
 // Run executes the overdue detection job: detects overdue tasks and passes them to the scheduler.
 func (j *OverdueDetectionJob) Run(ctx context.Context) error {
-	panic("not implemented")
-}
+	asOf := time.Now().UTC()
+	tasks, err := j.service.DetectOverdueTasks(ctx, asOf)
+	if err != nil {
+		j.logger.Error("failed to detect overdue tasks", "error", err)
+		return err
+	}
 
-// ensure time is imported (used by callers)
-var _ = time.Now
+	if err := j.scheduler.ScheduleNotifications(ctx, tasks); err != nil {
+		j.logger.Error("failed to schedule notifications", "error", err)
+		return err
+	}
+
+	j.logger.Info("overdue detection job completed", "count", len(tasks))
+	return nil
+}
