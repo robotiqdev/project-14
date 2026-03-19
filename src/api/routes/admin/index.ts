@@ -4,9 +4,8 @@ import auditRoutes from './audit.routes';
 
 const router = Router();
 
-// Stub — routes not mounted yet
-// router.use('/archives', archiveRoutes);
-// router.use('/audit', auditRoutes);
+router.use('/archives', archiveRoutes);
+router.use('/audit', auditRoutes);
 
 export { archiveRoutes, auditRoutes };
 export default router;

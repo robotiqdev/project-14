@@ -1,9 +1,9 @@
 import express from 'express';
+import adminRouter from './api/routes/admin/index';
 
 const app = express();
 
 app.use(express.json());
-
-// Stub — admin routes not mounted yet
+app.use('/api/admin', adminRouter);
 
 export default app;

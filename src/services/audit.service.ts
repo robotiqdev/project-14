@@ -6,12 +6,17 @@ export class AuditService {
 
   async listAuditLogs(
     _adminId: string,
-    _filter: AuditLogFilter
+    filter: AuditLogFilter
   ): Promise<PaginatedResult<AuditLog>> {
-    throw new Error('AuditService.listAuditLogs not implemented');
+    return this.auditRepo.findAll(filter);
   }
 
-  async getAuditLog(_adminId: string, _logId: string): Promise<AuditLog> {
-    throw new Error('AuditService.getAuditLog not implemented');
+  async getAuditLog(_adminId: string, logId: string): Promise<AuditLog> {
+    const log = await this.auditRepo.findById(logId);
+    if (!log) {
+      const error = Object.assign(new Error('Audit log not found'), { status: 404 });
+      throw error;
+    }
+    return log;
   }
 }

@@ -15,19 +15,41 @@ export class ArchiveService {
 
   async listArchivedTasks(
     _adminId: string,
-    _filter: ArchiveFilter
+    filter: ArchiveFilter
   ): Promise<PaginatedResult<ArchivedTask>> {
-    throw new Error('ArchiveService.listArchivedTasks not implemented');
+    return this.archiveRepo.findAllArchived(filter);
   }
 
   async getArchivedTask(
     _adminId: string,
-    _taskId: string
+    taskId: string
   ): Promise<ArchivedTask> {
-    throw new Error('ArchiveService.getArchivedTask not implemented');
+    const task = await this.archiveRepo.findArchivedById(taskId);
+    if (!task) {
+      const error = Object.assign(new Error('Task not found'), { status: 404 });
+      throw error;
+    }
+    return task;
   }
 
-  async restoreTask(_adminId: string, _taskId: string): Promise<Task> {
-    throw new Error('ArchiveService.restoreTask not implemented');
+  async restoreTask(adminId: string, taskId: string): Promise<Task> {
+    const existingTask = await this.archiveRepo.findArchivedById(taskId);
+    if (!existingTask) {
+      const error = Object.assign(new Error('Task not found'), { status: 404 });
+      throw error;
+    }
+
+    const restoredTask = await this.archiveRepo.restoreTask(taskId, adminId);
+
+    await this.auditRepo.createLog({
+      entity_type: 'task',
+      entity_id: taskId,
+      action: 'RESTORED',
+      actor_id: adminId,
+      before_state: { archived_at: existingTask.archived_at },
+      after_state: { archived_at: null },
+    });
+
+    return restoredTask;
   }
 }
