@@ -1,0 +1,8 @@
+export enum Action {
+  READ = 'READ',
+  WRITE = 'WRITE',
+  DELETE = 'DELETE',
+  ASSIGN = 'ASSIGN',
+  COMMENT = 'COMMENT',
+  CHANGE_STATUS = 'CHANGE_STATUS',
+}
