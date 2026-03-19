@@ -4,7 +4,14 @@ import { ITaskArchiveService } from '../../services/task-archive.service';
 export class TaskController {
   constructor(private readonly taskArchiveService: ITaskArchiveService) {}
 
-  archiveTask = async (_req: Request, _res: Response, _next: NextFunction): Promise<void> => {
-    throw new Error('Not implemented');
+  archiveTask = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const { id } = req.params;
+      const actorId = req.user!.id;
+      const task = await this.taskArchiveService.archiveTask(id, actorId);
+      res.status(200).json(task);
+    } catch (err) {
+      next(err);
+    }
   };
 }
