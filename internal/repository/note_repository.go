@@ -2,10 +2,11 @@ package repository
 
 import (
 	"context"
-	"errors"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgconn"
+
+	"github.com/robotiqdev/project-14/internal/domain"
 )
 
 // PgxPool is the minimal interface required by NoteRepository for database access.
@@ -24,7 +25,13 @@ func NewNoteRepository(pool PgxPool) *NoteRepository {
 }
 
 // DeleteNote removes a note by its ID.
-// TODO: implementation to be added in TASK-1243-004.
 func (r *NoteRepository) DeleteNote(ctx context.Context, id uuid.UUID) error {
-	return errors.New("DeleteNote: not implemented")
+	tag, err := r.pool.Exec(ctx, "DELETE FROM notes WHERE id = $1", id)
+	if err != nil {
+		return err
+	}
+	if tag.RowsAffected() == 0 {
+		return domain.ErrNoteNotFound
+	}
+	return nil
 }
