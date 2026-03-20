@@ -1,3 +1,7 @@
+import { applySchema } from './schema';
+import { runMigrations } from './migrator';
+
 export function initializeDatabase(): void {
-  throw new Error('Not implemented');
+  applySchema();
+  runMigrations();
 }

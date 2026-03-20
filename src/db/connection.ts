@@ -1,11 +1,20 @@
-import Database from 'better-sqlite3';
+import Database = require('better-sqlite3');
 
 let db: Database.Database | null = null;
 
 export function getDb(): Database.Database {
-  throw new Error('Not implemented');
+  if (!db) {
+    const dbPath = process.env.DB_PATH ?? 'data.db';
+    db = new Database(dbPath);
+    db.pragma('journal_mode = WAL');
+    db.pragma('foreign_keys = ON');
+  }
+  return db;
 }
 
 export function closeDb(): void {
-  throw new Error('Not implemented');
+  if (db) {
+    db.close();
+    db = null;
+  }
 }
