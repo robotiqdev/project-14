@@ -1,6 +1,9 @@
 package apierror
 
-import "net/http"
+import (
+	"encoding/json"
+	"net/http"
+)
 
 // APIError represents the JSON error envelope returned by all API endpoints.
 type APIError struct {
@@ -10,5 +13,7 @@ type APIError struct {
 
 // Render writes a JSON-encoded APIError to w with the given statusCode and message.
 func Render(w http.ResponseWriter, statusCode int, message string) {
-	panic("not implemented")
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(statusCode)
+	json.NewEncoder(w).Encode(APIError{Code: statusCode, Message: message})
 }
