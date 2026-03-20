@@ -1,6 +1,10 @@
 import { Router } from 'express';
+import { NoteController } from '../controllers/noteController';
+import { validate } from '../middleware/validate';
+import { validateCreateNote } from '../validators/noteValidator';
 
-// Stub — implementation provided in a future task
-export function createNoteRouter(_controller: any): Router {
-  throw new Error('createNoteRouter: not implemented');
+export function createNoteRouter(controller: NoteController): Router {
+  const router = Router();
+  router.post('/', validate(validateCreateNote), controller.create);
+  return router;
 }
