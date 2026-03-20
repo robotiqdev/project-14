@@ -7,7 +7,7 @@ export class NoteController {
   create = (req: Request, res: Response, next: NextFunction): void => {
     try {
       const note = this.service.createNote(req.body);
-      res.status(201).json({ data: note });
+      res.status(201).json(note);
     } catch (err) {
       next(err);
     }
